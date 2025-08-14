@@ -1,0 +1,2551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Italian Espresso - Interactive Learning</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #eaf7d7 0%, #d7e7f7 100%);
+            min-height: 100vh;
+            color: #153153;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .logo h1 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .chapter-list {
+            list-style: none;
+        }
+
+        .chapter-item {
+            margin-bottom: 10px;
+        }
+
+        .chapter-btn {
+            width: 100%;
+            padding: 12px 15px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chapter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .chapter-btn.active {
+            background: linear-gradient(45deg, #764ba2, #667eea);
+            transform: translateX(5px);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+            min-height: 500px;
+        }
+
+        .chapter-content {
+            display: none;
+        }
+
+        .chapter-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chapter-title {
+            color: #667eea;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            color: #764ba2;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .vocabulary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .vocab-card {
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .vocab-card:hover {
+            transform: scale(1.05);
+        }
+
+        .italian-word {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .english-word {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .exercise-section {
+            background: linear-gradient(45deg, #a8edea 0%, #fed6e3 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .exercise-title {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .quiz-question {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .answer-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .answer-btn:hover {
+            background: #764ba2;
+            transform: translateY(-1px);
+        }
+
+        .answer-btn.correct {
+            background: #4CAF50;
+        }
+
+        .answer-btn.incorrect {
+            background: #f44336;
+        }
+
+        /* Grammar Section Styles */
+        .grammar-subsection {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .grammar-title {
+            color: #667eea;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .grammar-content {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .grammar-content span[onclick]:not(.conjugation-form) {
+            cursor: pointer;
+            color: #667eea;
+            border-bottom: 1px dotted #667eea;
+            transition: all 0.2s ease;
+            background: none; 
+            padding: 0;       
+        }
+
+        .grammar-content span[onclick]:not(.conjugation-form):hover {
+            background-color: rgba(102, 126, 234, 0.1);
+            border-radius: 3px;
+            padding: 2px 4px;
+        }
+
+        .pronunciation-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 15px 0;
+        }
+
+        .pronunciation-rule {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .pronunciation-rule h5 {
+            color: #667eea;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+
+        .rule-item {
+            background: white;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .rule-item strong {
+            color: #764ba2;
+        }
+
+
+        .rule-item.special {
+            background: linear-gradient(45deg, #fff3e0, #f3e5f5);
+            border-left: 3px solid #ff9800;
+        }
+
+        .rule-explanation {
+            background: rgba(102, 126, 234, 0.15);
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-weight: bold;
+            color: #667eea;
+            text-align: center;
+        }
+
+        .rule-note {
+            background: rgba(76, 175, 80, 0.1);
+            padding: 8px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            border-left: 3px solid #4caf50;
+        }
+
+        .pronunciation-intro {
+            background: rgba(255, 193, 7, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .pronunciation-intro p {
+            margin: 0;
+            color: #e65100;
+        }
+
+        .pronunciation-summary {
+            margin-top: 25px;
+            background: rgba(156, 39, 176, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #9c27b0;
+        }
+
+        .pronunciation-summary h6 {
+            color: #9c27b0;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .summary-item {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        .summary-item strong {
+            color: #9c27b0;
+        }
+
+        .summary-item small {
+            color: #666;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .pronunciation-bonus {
+            margin-top: 20px;
+            background: rgba(233, 30, 99, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #e91e63;
+        }
+
+        .pronunciation-bonus h6 {
+            color: #e91e63;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+
+        .bonus-rules {
+            display: grid;
+            gap: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .conjugation-table {
+            margin: 15px 0;
+        }
+
+        .conjugation-row {
+            display: flex;
+            align-items: center;
+            margin: 12px 0;
+            padding: 12px;
+            background: rgba(118, 75, 162, 0.1);
+            border-radius: 8px;
+            border-left: 3px solid #764ba2;
+        }
+
+        .verb-header {
+            font-weight: bold;
+            color: #764ba2;
+            min-width: 150px;
+            flex-shrink: 0;
+        }
+
+        .conjugation-forms {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .conjugation-form {
+            background: #667eea;
+            color: white !important;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            text-decoration: none;
+        }
+        .conjugation-form:hover {
+            background: #764ba2;
+            transform: translateY(-1px);
+        }
+
+        .verb-conjugation h5 {
+            color: #667eea;
+            margin: 20px 0 10px 0;
+            font-size: 1.1em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 5px;
+        }
+
+        .adjective-rules {
+            display: grid;
+            gap: 12px;
+        }
+
+        .adjective-rule {
+            background: rgba(255, 193, 7, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 3px solid #ffc107;
+        }
+
+        .adjective-rule strong {
+            color: #e65100;
+        }
+
+        .adjective-rule em {
+            color: #666;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .preposition-rules {
+            display: grid;
+            gap: 15px;
+        }
+
+        .preposition-rule {
+            background: rgba(76, 175, 80, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #4caf50;
+        }
+
+        .preposition-rule strong {
+            color: #2e7d32;
+            font-size: 1.1em;
+        }
+
+        .examples {
+            margin-top: 8px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 5px;
+        }
+
+        .examples em {
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .pronunciation-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .conjugation-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .verb-header {
+                min-width: auto;
+            }
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.3);
+            height: 8px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .welcome-screen {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .welcome-title {
+            font-size: 2.5em;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .start-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .audio-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .main-content {
+                padding: 20px 15px;
+            }
+            
+            .vocabulary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <h1>🇮🇹 Italiano</h1>
+                <p>New Italian Espresso</p>
+            </div>
+            
+            <ul class="chapter-list">
+                <li class="chapter-item">
+                    <button class="chapter-btn" onclick="showChapter('welcome')">
+                        📚 Welcome
+                    </button>
+                </li>
+                <li class="chapter-item">
+                    <button class="chapter-btn" onclick="showChapter('chapter1')">
+                        📖 Capitolo 1: Saluti
+                    </button>
+                </li>
+                <li class="chapter-item">
+                    <button class="chapter-btn" onclick="showChapter('chapter2')">
+                        👤 Capitolo 2: Buon Appetito!
+                    </button>
+                </li>
+                <li class="chapter-item">
+                    <button class="chapter-btn" onclick="showChapter('chapter3')">
+                        🏠 Capitolo 3: Io e gli altri
+                    </button>
+                </li>
+                <li class="chapter-item">
+                    <button class="chapter-btn" onclick="showChapter('chapter4')">
+                        🍕 Capitolo 4: Tempo libero
+                    </button>
+                </li>
+            </ul>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="content-card">
+                <!-- Welcome Screen -->
+                <div class="chapter-content active" id="welcome">
+                    <div class="welcome-screen">
+                        <h1 class="welcome-title">Benvenuto! 🇮🇹</h1>
+                        <p class="welcome-subtitle">
+                            Welcome to your interactive Italian learning journey with New Italian Espresso!<br>
+                            This web app will help you practice vocabulary, grammar, and exercises from your textbook.
+                        </p>
+                        <button class="start-btn" onclick="showChapter('chapter1')">
+                            Start Learning 🚀
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chapter 1: Saluti (Greetings) -->
+                <div class="chapter-content" id="chapter1">
+                    <h2 class="chapter-title">Capitolo 1: Saluti e Presentazioni</h2>
+                    
+                    <!-- Greetings and Farewells -->
+                    <div class="section">
+                        <h3 class="section-title">👋 Saluti (Greetings & Farewells)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('ciao')">
+                                <div class="italian-word">Ciao!</div>
+                                <div class="english-word">Hi/Bye!</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('buongiorno')">
+                                <div class="italian-word">Buongiorno!</div>
+                                <div class="english-word">Good morning!</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('buonasera')">
+                                <div class="italian-word">Buonasera!</div>
+                                <div class="english-word">Good evening!</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('buonanotte')">
+                                <div class="italian-word">Buonanotte!</div>
+                                <div class="english-word">Good night!</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('arrivederci')">
+                                <div class="italian-word">Arrivederci!</div>
+                                <div class="english-word">Bye!, Goodbye!</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('a-presto')">
+                                <div class="italian-word">A presto!</div>
+                                <div class="english-word">See you soon!</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('a-domani')">
+                                <div class="italian-word">A domani!</div>
+                                <div class="english-word">See you tomorrow!</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Introductions -->
+                    <div class="section">
+                        <h3 class="section-title">🤝 Presentazioni (Introductions)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('come-ti-chiami')">
+                                <div class="italian-word">Come ti chiami?</div>
+                                <div class="english-word">What's your name?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('mi-chiamo')">
+                                <div class="italian-word">Mi chiamo...</div>
+                                <div class="english-word">My name is...</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('piacere')">
+                                <div class="italian-word">Piacere.</div>
+                                <div class="english-word">Nice to meet you.</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('di-dove-sei')">
+                                <div class="italian-word">Di dove sei?</div>
+                                <div class="english-word">Where are you from?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('sono-di')">
+                                <div class="italian-word">Sono di Barcellona.</div>
+                                <div class="english-word">I am from Barcelona.</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('io-sono-italiano')">
+                                <div class="italian-word">Io sono italiano/a.</div>
+                                <div class="english-word">I am Italian.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Polite Expressions -->
+                    <div class="section">
+                        <h3 class="section-title">🙏 Espressioni di Cortesia (Polite Expressions)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('scusi')">
+                                <div class="italian-word">Scusi</div>
+                                <div class="english-word">Excuse me...</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('per-favore')">
+                                <div class="italian-word">per favore</div>
+                                <div class="english-word">please</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('signora')">
+                                <div class="italian-word">signora</div>
+                                <div class="english-word">Madam, Mrs.</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('signore')">
+                                <div class="italian-word">signore</div>
+                                <div class="english-word">Sir, Mr.</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('professore')">
+                                <div class="italian-word">professore</div>
+                                <div class="english-word">professor</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('professoressa')">
+                                <div class="italian-word">professoressa</div>
+                                <div class="english-word">professor (feminine)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Useful Classroom Phrases -->
+                    <div class="section">
+                        <h3 class="section-title">📚 Frasi Utili in Classe (Useful Classroom Phrases)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('come-si-scrive')">
+                                <div class="italian-word">Come si scrive?</div>
+                                <div class="english-word">How do you spell/write it?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('puoi-ripetere')">
+                                <div class="italian-word">Puoi ripetere?</div>
+                                <div class="english-word">Can you repeat?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('come-si-pronuncia')">
+                                <div class="italian-word">Come si pronuncia?</div>
+                                <div class="english-word">How do you pronounce it?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('che-significa')">
+                                <div class="italian-word">Che significa?</div>
+                                <div class="english-word">What does that/it mean?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('come-si-dice')">
+                                <div class="italian-word">Come si dice...?</div>
+                                <div class="english-word">How do you say...?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('come-scusa')">
+                                <div class="italian-word">Come, scusa?</div>
+                                <div class="english-word">Sorry?, I beg your pardon?</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Classroom Objects -->
+                    <div class="section">
+                        <h3 class="section-title">🏫 Oggetti in Classe (Classroom Objects)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('sedia')">
+                                <div class="italian-word">sedia</div>
+                                <div class="english-word">chair</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('finestra')">
+                                <div class="italian-word">finestra</div>
+                                <div class="english-word">window</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('libro')">
+                                <div class="italian-word">libro</div>
+                                <div class="english-word">book</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('penna')">
+                                <div class="italian-word">penna</div>
+                                <div class="english-word">pen</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('lavagna')">
+                                <div class="italian-word">lavagna</div>
+                                <div class="english-word">(black)board</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('porta')">
+                                <div class="italian-word">porta</div>
+                                <div class="english-word">door</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('tavolo')">
+                                <div class="italian-word">tavolo</div>
+                                <div class="english-word">table</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="section">
+                        <h3 class="section-title">👤 Informazioni Personali (Personal Information)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('nome')">
+                                <div class="italian-word">nome</div>
+                                <div class="english-word">(first) name</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('cognome')">
+                                <div class="italian-word">cognome</div>
+                                <div class="english-word">family name</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('dove-abiti')">
+                                <div class="italian-word">Dove abiti?</div>
+                                <div class="english-word">Where do you live?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('abito-in-centro')">
+                                <div class="italian-word">Abito in centro.</div>
+                                <div class="english-word">I live in the center.</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('numero-telefono')">
+                                <div class="italian-word">Qual è il tuo numero di telefono?</div>
+                                <div class="english-word">What is your phone number?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('indirizzo')">
+                                <div class="italian-word">Qual è il tuo indirizzo?</div>
+                                <div class="english-word">What is your address?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('hai-email')">
+                                <div class="italian-word">Hai un'e-mail?</div>
+                                <div class="english-word">Do you have an e-mail address?</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Work and Study -->
+                    <div class="section">
+                        <h3 class="section-title">💼 Lavoro e Studio (Work and Study)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('studio-in-italia')">
+                                <div class="italian-word">Studio in Italia.</div>
+                                <div class="english-word">I study in Italy.</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('che-cosa-studi')">
+                                <div class="italian-word">Che cosa studi?</div>
+                                <div class="english-word">What do you study?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('economia')">
+                                <div class="italian-word">economia</div>
+                                <div class="english-word">economics, business</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('lavoro')">
+                                <div class="italian-word">Lavoro.</div>
+                                <div class="english-word">I work.</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('dove-lavori')">
+                                <div class="italian-word">Dove lavori?</div>
+                                <div class="english-word">Where do you work?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('banca')">
+                                <div class="italian-word">banca</div>
+                                <div class="english-word">bank</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Common Words -->
+                    <div class="section">
+                        <h3 class="section-title">📝 Parole Comuni (Common Words)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('questa-parola')">
+                                <div class="italian-word">questa parola</div>
+                                <div class="english-word">this word</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('personaggio')">
+                                <div class="italian-word">personaggio</div>
+                                <div class="english-word">character</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('misterioso')">
+                                <div class="italian-word">misterioso</div>
+                                <div class="english-word">mysterious, unknown</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('famiglia')">
+                                <div class="italian-word">famiglia</div>
+                                <div class="english-word">family</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('con')">
+                                <div class="italian-word">con</div>
+                                <div class="english-word">with</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('beata-te')">
+                                <div class="italian-word">Beata te!</div>
+                                <div class="english-word">Lucky you! (feminine)</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('invece')">
+                                <div class="italian-word">invece</div>
+                                <div class="english-word">instead, on the other hand</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('in-periferia')">
+                                <div class="italian-word">in periferia</div>
+                                <div class="english-word">in the outskirts</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('anche')">
+                                <div class="italian-word">anche</div>
+                                <div class="english-word">also, too, as well</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('pero')">
+                                <div class="italian-word">però</div>
+                                <div class="english-word">but</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('numero')">
+                                <div class="italian-word">numero</div>
+                                <div class="english-word">number</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('cellulare')">
+                                <div class="italian-word">cellulare</div>
+                                <div class="english-word">cellphone</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('telefono-fisso')">
+                                <div class="italian-word">telefono fisso</div>
+                                <div class="english-word">land line phone</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Important Verbs -->
+                    <div class="section">
+                        <h3 class="section-title">🔄 Verbi Importanti (Important Verbs)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('essere')">
+                                <div class="italian-word">essere</div>
+                                <div class="english-word">to be</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('studiare')">
+                                <div class="italian-word">studiare</div>
+                                <div class="english-word">to study</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('abitare')">
+                                <div class="italian-word">abitare</div>
+                                <div class="english-word">to live</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('lavorare')">
+                                <div class="italian-word">lavorare</div>
+                                <div class="english-word">to work</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('parlare')">
+                                <div class="italian-word">parlare</div>
+                                <div class="english-word">to speak, to talk</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('visitare')">
+                                <div class="italian-word">visitare</div>
+                                <div class="english-word">to visit</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('ascoltare')">
+                                <div class="italian-word">ascoltare</div>
+                                <div class="english-word">to listen to</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grammar Section -->
+                    <div class="section">
+                        <h3 class="section-title">📝 Grammatica (Grammar)</h3>
+                        
+                        <!-- Pronunciation Rules -->
+                        <div class="grammar-subsection">
+                            <h4 class="grammar-title">🔊 Pronuncia - Pronunciation</h4>
+                            <div class="grammar-content">
+                                <div class="pronunciation-intro">
+                                    <p><strong>In Italian, the pronunciation of C and G changes depending on the vowel that follows them.</strong></p>
+                                </div>
+                                
+                                <div class="pronunciation-grid">
+                                    <div class="pronunciation-rule">
+                                        <h5>🔨 Hard Sounds [k] and [g]</h5>
+                                        <div class="rule-examples">
+                                            <div class="rule-item">
+                                                <strong>C + a, o, u → [k]</strong> <em>(like "kilo")</em><br>
+                                                Examples: <span onclick="playAudio('casa')">casa</span>, <span onclick="playAudio('come')">come</span>, <span onclick="playAudio('cuore')">cuore</span>
+                                            </div>
+                                            <div class="rule-item">
+                                                <strong>G + a, o, u → [g]</strong> <em>(like "gold")</em><br>
+                                                Examples: <span onclick="playAudio('gatto')">gatto</span>, <span onclick="playAudio('gonna')">gonna</span>, <span onclick="playAudio('gusto')">gusto</span>
+                                            </div>
+                                            <div class="rule-item">
+                                                <strong>SC + a, o, u → [sk]</strong> <em>(like "school")</em><br>
+                                                Examples: <span onclick="playAudio('scuola')">scuola</span>, <span onclick="playAudio('scatola')">scatola</span>
+                                            </div>
+                                            <div class="rule-explanation">
+                                                <strong>🔑 To keep hard sounds before E or I, add "H":</strong>
+                                            </div>
+                                            <div class="rule-item special">
+                                                <strong>CH + e, i → [k]</strong><br>
+                                                Examples: <span onclick="playAudio('chilo')">chilo</span> [ˈkiːlo], <span onclick="playAudio('che')">che</span>, <span onclick="playAudio('perché')">perché</span>
+                                            </div>
+                                            <div class="rule-item special">
+                                                <strong>GH + e, i → [g]</strong><br>
+                                                Examples: <span onclick="playAudio('lunghe')">lunghe</span> [ˈluŋɡe], <span onclick="playAudio('spaghetti')">spaghetti</span>
+                                            </div>
+                                            <div class="rule-item special">
+                                                <strong>SCH + e, i → [sk]</strong> (hard)<br>
+                                                Examples: <span onclick="playAudio('schema')">schema</span>, <span onclick="playAudio('scheda')">scheda</span>
+                                            </div>
+                                            <div class="rule-note">
+                                                💡 <em>The "h" tells you "keep it hard."</em>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="pronunciation-rule">
+                                        <h5>🌸 Soft Sounds [tʃ] and [dʒ]</h5>
+                                        <div class="rule-examples">
+                                            <div class="rule-item">
+                                                <strong>C + e, i → [tʃ]</strong> <em>(like "chocolate")</em><br>
+                                                Examples: <span onclick="playAudio('città')">città</span>, <span onclick="playAudio('cena')">cena</span>, <span onclick="playAudio('cinema')">cinema</span>
+                                            </div>
+                                            <div class="rule-item">
+                                                <strong>G + e, i → [dʒ]</strong> <em>(like "jar")</em><br>
+                                                Examples: <span onclick="playAudio('gelato')">gelato</span>, <span onclick="playAudio('gente')">gente</span>, <span onclick="playAudio('giorno')">giorno</span>
+                                            </div>
+                                            <div class="rule-item">
+                                                <strong>SC + e, i → [ʃ]</strong> <em>(like "shampoo")</em><br>
+                                                Examples: <span onclick="playAudio('sci')">sci</span>, <span onclick="playAudio('scena')">scena</span>
+                                            </div>
+                                            <div class="rule-explanation">
+                                                <strong>🔑 To get soft sounds before A, O, U, add "I":</strong>
+                                            </div>
+                                            <div class="rule-item special">
+                                                <strong>CI + a, o, u → [tʃ]</strong><br>
+                                                Examples: <span onclick="playAudio('cioccolata')">cioccolata</span> [tʃokkoˈlaːta], <span onclick="playAudio('ciao')">ciao</span>, <span onclick="playAudio('ciuffo')">ciuffo</span>
+                                            </div>
+                                            <div class="rule-item special">
+                                                <strong>GI + a, o, u → [dʒ]</strong><br>
+                                                Examples: <span onclick="playAudio('giacca')">giacca</span> [ˈdʒakka], <span onclick="playAudio('gioco')">gioco</span>, <span onclick="playAudio('giusto')">giusto</span>
+                                            </div>
+                                            <div class="rule-item special">
+                                                <strong>SCI + a, o, u → [ʃ]</strong> (soft)<br>
+                                                Examples: <span onclick="playAudio('sciarpa')">sciarpa</span>, <span onclick="playAudio('sciocco')">sciocco</span>
+                                            </div>
+                                            <div class="rule-note">
+                                                💡 <em>The "i" is often not pronounced as a separate vowel — it just creates the soft sound.</em>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="pronunciation-summary">
+                                    <h6>📋 Quick Summary:</h6>
+                                    <div class="summary-grid">
+                                        <div class="summary-item">
+                                            <strong>C/CH rules:</strong> Hard [k] sound<br>
+                                            <small>CH is used when you want hard C before e/i</small>
+                                        </div>
+                                        <div class="summary-item">
+                                            <strong>C/CI rules:</strong> Soft [tʃ] sound<br>
+                                            <small>CI is used when you want soft C before a/o/u</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="pronunciation-bonus">
+                                    <h6>🎯 Bonus: Hiatus Cases</h6>
+                                    <div class="bonus-rules">
+                                    <p><strong>In Italian, when two vowel letters come together, they are often blended together smoothly, but sometimes they are pronounced as two separate syllables.</strong></p>
+                                    </div>
+                                       <div class="rule-item">
+                                        <strong>Europa → E-u-ro-pa → [ɛ] + [u]</strong><br>
+                                        You pronounce <strong>E</strong> ([ɛ], like "bet") and <strong>U</strong> ([u], like "boot") separately: <span onclick="playAudio('europa')">eh-oo-ro-pa</span> (not <em>yoo-ro-pa</em>)
+                                       </div>
+                                       <div class="rule-item">
+                                        <strong>vieni → vi-e-ni → [j] + [ɛ]</strong><br>
+                                        Here the written "ie" is pronounced as a glide [j] (like <em>y</em> in "yes") followed by [ɛ]: <span onclick="playAudio('vieni')">VYEH-ni</span> (two separate parts, not blended)
+                                       </div>
+                                       <div class="rule-item special">
+                                        <strong>pausa → pa-u-sa → [a] + [u]</strong><br>
+                                        Each vowel is pronounced in sequence: <span onclick="playAudio('pausa')">PAH-oo-sa</span> (not <em>pow-sa</em>)
+                                       </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Present Tense -->
+                        <div class="grammar-subsection">
+                            <h4 class="grammar-title">⏰ Presente Indicativo - Present Tense (io, tu)</h4>
+                            <div class="grammar-content">
+                                <div class="verb-conjugation">
+                                    <h5>Verbi in -ARE (First Conjugation)</h5>
+                                    <div class="conjugation-table">
+                                        <div class="conjugation-row">
+                                            <div class="verb-header">abitare (to live)</div>
+                                            <div class="conjugation-forms">
+                                                <span class="conjugation-form" onclick="playAudio('io-abito')">io abito</span>
+                                                <span class="conjugation-form" onclick="playAudio('tu-abiti')">tu abiti</span>
+                                            </div>
+                                        </div>
+                                        <div class="conjugation-row">
+                                            <div class="verb-header">lavorare (to work)</div>
+                                            <div class="conjugation-forms">
+                                                <span class="conjugation-form" onclick="playAudio('io-lavoro')">io lavoro</span>
+                                                <span class="conjugation-form" onclick="playAudio('tu-lavori')">tu lavori</span>
+                                            </div>
+                                        </div>
+                                        <div class="conjugation-row">
+                                            <div class="verb-header">studiare (to study)</div>
+                                            <div class="conjugation-forms">
+                                                <span class="conjugation-form" onclick="playAudio('io-studio')">io studio</span>
+                                                <span class="conjugation-form" onclick="playAudio('io-studi')">tu studi</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <h5>Verbi Irregolari (Irregular Verbs)</h5>
+                                    <div class="conjugation-table">
+                                        <div class="conjugation-row">
+                                            <div class="verb-header">essere (to be)</div>
+                                            <div class="conjugation-forms">
+                                                <span class="conjugation-form" onclick="playAudio('io-sono')">io sono</span>
+                                                <span class="conjugation-form" onclick="playAudio('io-sei')">tu sei</span>
+                                            </div>
+                                        </div>
+                                        <div class="conjugation-row">
+                                            <div class="verb-header">chiamarsi (to call oneself)</div>
+                                            <div class="conjugation-forms">
+                                                <span class="conjugation-form" onclick="playAudio('io-mi-chiamo')">io mi chiamo</span>
+                                                <span class="conjugation-form" onclick="playAudio('tu-ti-chiami')">tu ti chiami</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Adjectives -->
+                        <div class="grammar-subsection">
+                            <h4 class="grammar-title">🎯 Aggettivi Singolari - Singular Adjectives</h4>
+                            <div class="grammar-content">
+                                <div class="adjective-rules">
+                                    <div class="adjective-rule">
+                                        <strong>-o endings:</strong> singular masculine nouns<br>
+                                        <em>
+                                            <span onclick="playAudio('john-e-australiano')">John è australiano</span>
+                                        </em>
+                                    </div>
+                                    <div class="adjective-rule">
+                                        <strong>-a endings:</strong> singular feminine nouns<br>
+                                        <em>
+                                            <span onclick="playAudio('rose-e-australiana')">Rose è australiana</span>
+                                        </em>
+                                    </div>
+                                    <div class="adjective-rule">
+                                        <strong>-e endings:</strong> both masculine and feminine<br>
+                                        <em>
+                                            <span onclick="playAudio('paul-e-inglese')">Paul è inglese</span> / 
+                                            <span onclick="playAudio('emily-e-inglese')">Emily è inglese</span>
+                                        </em>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Prepositions -->
+                        <div class="grammar-subsection">
+                            <h4 class="grammar-title">🌍 Preposizioni - Prepositions (di, a, in)</h4>
+                            <div class="grammar-content">
+                                <div class="preposition-rules">
+                                    <div class="preposition-rule">
+                                        <strong>DI</strong> - city of origin (with essere)<br>
+                                        <div class="examples">
+                                            <em><span onclick="playAudio('sono-di-milano')">Sono di Milano</span>. • 
+                                                <span onclick="playAudio('sono-di-boston')">Sono di Boston</span>.</em>
+                                        </div>
+                                    </div>
+                                    <div class="preposition-rule">
+                                        <strong>A</strong> - city where you are/live/work<br>
+                                        <div class="examples">
+                                            <em><span onclick="playAudio('abito-a-verona')">Abito a Verona</span>. • 
+                                                <span onclick="playAudio('sono-a-londra')">Sono a Londra</span>.
+                                            </em>
+                                        </div>
+                                    </div>
+                                    <div class="preposition-rule">
+                                        <strong>IN</strong> - country where you are/live/work<br>
+                                        <div class="examples">
+                                            <em>
+                                                <span onclick="playAudio('vivo-in-italia')">Vivo in Italia</span>. • 
+                                                <span onclick="playAudio('sono-in-spagna')">Sono in Spagna</span>.
+                                            </em>
+                                        </div>
+                                    </div>
+                                    <div class="preposition-rule">
+                                        <strong>NEGLI/NELLE</strong> - plural countries<br>
+                                        <div class="examples">
+                                            <em>
+                                                <span onclick="playAudio('studio-negli-stati-uniti')">Studio negli Stati Uniti</span>. • 
+                                                <span onclick="playAudio('vivo-nelle-filippine')">Vivo nelle Filippine</span>.
+                                            </em>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    
+
+                    <div class="exercise-section">
+                        <h3 class="exercise-title">✏️ Esercizio: Choose the correct greeting</h3>
+                        <div class="quiz-question">
+                            <p><strong>What do you say when you meet someone in the morning?</strong></p>
+                            <button class="answer-btn" onclick="checkAnswer(this, false)">Buonasera</button>
+                            <button class="answer-btn" onclick="checkAnswer(this, true)">Buongiorno</button>
+                            <button class="answer-btn" onclick="checkAnswer(this, false)">Arrivederci</button>
+                        </div>
+                        <div class="quiz-question">
+                            <p><strong>How do you say "thank you" in Italian?</strong></p>
+                            <button class="answer-btn" onclick="checkAnswer(this, false)">Prego</button>
+                            <button class="answer-btn" onclick="checkAnswer(this, true)">Grazie</button>
+                            <button class="answer-btn" onclick="checkAnswer(this, false)">Ciao</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chapter 2: Presentazioni -->
+                <div class="chapter-content" id="chapter2">
+                    <h2 class="chapter-title">Capitolo 2: Buon Appetito!</h2>
+                    <!-- Basic Questions -->
+                    <div class="section">
+                        <h3 class="section-title">❓ Domande di Base (Basic Questions)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('che-cos-e-questo')">
+                                <div class="italian-word">Che cos'è questo?</div>
+                                <div class="english-word">What is this?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('preferisci')">
+                                <div class="italian-word">Preferisci...?</div>
+                                <div class="english-word">Do you prefer...?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('preferire')">
+                                <div class="italian-word">preferire</div>
+                                <div class="english-word">to prefer</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ordering Phrases -->
+                    <div class="section">
+                        <h3 class="section-title">🗣️ Ordinare (Ordering)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('io-prendo')">
+                                <div class="italian-word">Io prendo...</div>
+                                <div class="english-word">I'll have...</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('anchio-vorrei')">
+                                <div class="italian-word">Anch'io vorrei...</div>
+                                <div class="english-word">I would like to have... too</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('da-bere-vorrei')">
+                                <div class="italian-word">Da bere vorrei...</div>
+                                <div class="english-word">I'll drink...</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('mi-porta')">
+                                <div class="italian-word">Mi porta...?</div>
+                                <div class="english-word">Can you bring...?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('per-cortesia')">
+                                <div class="italian-word">per cortesia</div>
+                                <div class="english-word">please</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('il-conto-per-favore')">
+                                <div class="italian-word">Il conto, per favore!</div>
+                                <div class="english-word">The bill, please!</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Restaurant Service -->
+                    <div class="section">
+                        <h3 class="section-title">🍽️ Servizio Ristorante (Restaurant Service)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('ristorante')">
+                                <div class="italian-word">ristorante</div>
+                                <div class="english-word">restaurant</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('prezzo-fisso')">
+                                <div class="italian-word">prezzo fisso</div>
+                                <div class="english-word">fixed price</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('scusi')">
+                                <div class="italian-word">Scusi!</div>
+                                <div class="english-word">Excuse me! (formal)</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('certo')">
+                                <div class="italian-word">Certo!</div>
+                                <div class="english-word">Of course! Sure!</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('desidera-ancora-qualcosaltro')">
+                                <div class="italian-word">Desidera ancora qualcos'altro?</div>
+                                <div class="english-word">Would you like anything else?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('no-grazie')">
+                                <div class="italian-word">No, grazie</div>
+                                <div class="english-word">No, thank you</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('un-momento')">
+                                <div class="italian-word">Un momento!</div>
+                                <div class="english-word">Just a moment!</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Drinks -->
+                    <div class="section">
+                        <h3 class="section-title">🍷 Bevande (Drinks)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('acqua')">
+                                <div class="italian-word">acqua</div>
+                                <div class="english-word">water</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('acqua-minerale')">
+                                <div class="italian-word">acqua minerale</div>
+                                <div class="english-word">mineral water</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('birra')">
+                                <div class="italian-word">birra</div>
+                                <div class="english-word">beer</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('vino')">
+                                <div class="italian-word">vino</div>
+                                <div class="english-word">wine</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('vino-bianco')">
+                                <div class="italian-word">vino bianco</div>
+                                <div class="english-word">white wine</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('vino-rosso')">
+                                <div class="italian-word">vino rosso</div>
+                                <div class="english-word">red wine</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('caffe-macchiato')">
+                                <div class="italian-word">caffè macchiato</div>
+                                <div class="english-word">coffee with a drop of milk</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('caffe-corretto')">
+                                <div class="italian-word">caffè corretto</div>
+                                <div class="english-word">coffee with a drop of liquor</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('te-al-limone')">
+                                <div class="italian-word">tè al limone</div>
+                                <div class="english-word">lemon tea</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('spremuta-darancia')">
+                                <div class="italian-word">spremuta d'arancia</div>
+                                <div class="english-word">freshly squeezed orange juice</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Appetizers & Snacks -->
+                    <div class="section">
+                        <h3 class="section-title">🥖 Antipasti e Spuntini (Appetizers & Snacks)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('antipasti')">
+                                <div class="italian-word">antipasti</div>
+                                <div class="english-word">starter, appetizer</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('cornetto')">
+                                <div class="italian-word">cornetto</div>
+                                <div class="english-word">croissant</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('panino')">
+                                <div class="italian-word">panino</div>
+                                <div class="english-word">sandwich</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('patatine-fritte')">
+                                <div class="italian-word">patatine fritte</div>
+                                <div class="english-word">French fries</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Courses -->
+                    <div class="section">
+                        <h3 class="section-title">🍝 Piatti Principali (Main Courses)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('primi-piatti')">
+                                <div class="italian-word">primi piatti</div>
+                                <div class="english-word">first courses</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('pasta')">
+                                <div class="italian-word">pasta</div>
+                                <div class="english-word">pasta</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('minestra')">
+                                <div class="italian-word">minestra</div>
+                                <div class="english-word">soup</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('secondi-piatti')">
+                                <div class="italian-word">secondi piatti</div>
+                                <div class="english-word">second courses</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('carne')">
+                                <div class="italian-word">carne</div>
+                                <div class="english-word">meat</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('bistecca')">
+                                <div class="italian-word">bistecca</div>
+                                <div class="english-word">steak</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('pollo')">
+                                <div class="italian-word">pollo</div>
+                                <div class="english-word">chicken</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('prosciutto')">
+                                <div class="italian-word">prosciutto</div>
+                                <div class="english-word">ham</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('pesce')">
+                                <div class="italian-word">pesce</div>
+                                <div class="english-word">fish</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Side Dishes -->
+                    <div class="section">
+                        <h3 class="section-title">🥗 Contorni (Side Dishes)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('contorno')">
+                                <div class="italian-word">contorno</div>
+                                <div class="english-word">side dish</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('insalata')">
+                                <div class="italian-word">insalata</div>
+                                <div class="english-word">salad</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('pomodoro')">
+                                <div class="italian-word">pomodoro</div>
+                                <div class="english-word">tomato</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fruits & Sweets -->
+                    <div class="section">
+                        <h3 class="section-title">🍓 Frutta e Dolci (Fruits & Sweets)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('frutta')">
+                                <div class="italian-word">frutta</div>
+                                <div class="english-word">fruit</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('macedonia')">
+                                <div class="italian-word">macedonia</div>
+                                <div class="english-word">fruit salad</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('fragola')">
+                                <div class="italian-word">fragola</div>
+                                <div class="english-word">strawberry</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('arancia')">
+                                <div class="italian-word">arancia</div>
+                                <div class="english-word">orange</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('gelato')">
+                                <div class="italian-word">gelato</div>
+                                <div class="english-word">ice cream</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('cioccolato')">
+                                <div class="italian-word">cioccolato</div>
+                                <div class="english-word">chocolate</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('torta')">
+                                <div class="italian-word">torta</div>
+                                <div class="english-word">cake, pie</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dairy & Other -->
+                    <div class="section">
+                        <h3 class="section-title">🧀 Latticini e Altro (Dairy & Other)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('formaggio')">
+                                <div class="italian-word">formaggio</div>
+                                <div class="english-word">cheese</div>               
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="exercise-section">
+                        <h3 class="exercise-title">✏️ Complete the dialogue</h3>
+                        <div class="quiz-question">
+                            <p><strong>A: "Come ti chiami?"<br>B: "___ chiamo Marco."</strong></p>
+                            <button class="answer-btn" onclick="checkAnswer(this, true)">Mi</button>
+                            <button class="answer-btn" onclick="checkAnswer(this, false)">Ti</button>
+                            <button class="answer-btn" onclick="checkAnswer(this, false)">Si</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chapter 3: Io e gli altri -->
+                <div class="chapter-content" id="chapter3">
+                    <h2 class="chapter-title">Capitolo 3: Io e gli altri</h2>
+                    
+                    <!-- Basic Introductions -->
+                    <div class="section">
+                        <h3 class="section-title">👋 Presentazioni (Introductions)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('presentare')">
+                                <div class="italian-word">presentare</div>
+                                <div class="english-word">to introduce</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('qualcuno')">
+                                <div class="italian-word">qualcuno</div>
+                                <div class="english-word">someone, somebody</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('come-stai')">
+                                <div class="italian-word">Come stai?</div>
+                                <div class="english-word">How are you? (informal)</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('benissimo')">
+                                <div class="italian-word">benissimo</div>
+                                <div class="english-word">very well</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('parla-molto-bene-italiano')">
+                                <div class="italian-word">Parla molto bene l'italiano.</div>
+                                <div class="english-word">He/She speaks Italian very well.</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('purtroppo')">
+                                <div class="italian-word">purtroppo</div>
+                                <div class="english-word">unfortunately</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('chi-e')">
+                                <div class="italian-word">Chi è?</div>
+                                <div class="english-word">Who is that/he/she?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('amare')">
+                                <div class="italian-word">amare</div>
+                                <div class="english-word">to love</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Days of the Week -->
+                    <div class="section">
+                        <h3 class="section-title">📅 Giorni della Settimana (Days of the Week)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('importante')">
+                                <div class="italian-word">importante</div>
+                                <div class="english-word">important</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('lunedi')">
+                                <div class="italian-word">lunedì</div>
+                                <div class="english-word">Monday</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('martedi')">
+                                <div class="italian-word">martedì</div>
+                                <div class="english-word">Tuesday</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('mercoledi')">
+                                <div class="italian-word">mercoledì</div>
+                                <div class="english-word">Wednesday</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('giovedi')">
+                                <div class="italian-word">giovedì</div>
+                                <div class="english-word">Thursday</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('venerdi')">
+                                <div class="italian-word">venerdì</div>
+                                <div class="english-word">Friday</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('sabato')">
+                                <div class="italian-word">sabato</div>
+                                <div class="english-word">Saturday</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('domenica')">
+                                <div class="italian-word">domenica</div>
+                                <div class="english-word">Sunday</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="section">
+                        <h3 class="section-title">👤 Informazioni Personali (Personal Information)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('quanti-anni-hai')">
+                                <div class="italian-word">Quanti anni hai?</div>
+                                <div class="english-word">How old are you?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('anni')">
+                                <div class="italian-word">anni</div>
+                                <div class="english-word">years</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('avere')">
+                                <div class="italian-word">avere</div>
+                                <div class="english-word">to have</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('ammogliato')">
+                                <div class="italian-word">ammogliato</div>
+                                <div class="english-word">married</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('figlio')">
+                                <div class="italian-word">figlio</div>
+                                <div class="english-word">son</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('medico-chirurgo')">
+                                <div class="italian-word">medico chirurgo</div>
+                                <div class="english-word">surgeon</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('ospedale-pubblico')">
+                                <div class="italian-word">ospedale pubblico</div>
+                                <div class="english-word">public hospital</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('va-a-napoli')">
+                                <div class="italian-word">va a Napoli</div>
+                                <div class="english-word">She goes to Naples</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activities & Verbs -->
+                    <div class="section">
+                        <h3 class="section-title">🏃 Attività (Activities)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('andare')">
+                                <div class="italian-word">andare</div>
+                                <div class="english-word">to go</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('insegnare')">
+                                <div class="italian-word">insegnare</div>
+                                <div class="english-word">to teach</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('treno')">
+                                <div class="italian-word">treno</div>
+                                <div class="english-word">train</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('perche')">
+                                <div class="italian-word">perché</div>
+                                <div class="english-word">because (also why)</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('detestare')">
+                                <div class="italian-word">detestare</div>
+                                <div class="english-word">to hate</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('guidare')">
+                                <div class="italian-word">guidare</div>
+                                <div class="english-word">to drive</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('avvocato')">
+                                <div class="italian-word">avvocato</div>
+                                <div class="english-word">lawyer, attorney</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('vivere')">
+                                <div class="italian-word">vivere</div>
+                                <div class="english-word">to live</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('viaggiare')">
+                                <div class="italian-word">viaggiare</div>
+                                <div class="english-word">to travel</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('praticare-sport')">
+                                <div class="italian-word">praticare sport</div>
+                                <div class="english-word">to play sports</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('calcio')">
+                                <div class="italian-word">calcio</div>
+                                <div class="english-word">soccer, football</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Professions -->
+                    <div class="section">
+                        <h3 class="section-title">💼 Professioni (Professions)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('fare')">
+                                <div class="italian-word">fare</div>
+                                <div class="english-word">to do, to make</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('preparare')">
+                                <div class="italian-word">preparare</div>
+                                <div class="english-word">to prepare</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('segretario')">
+                                <div class="italian-word">segretario/a</div>
+                                <div class="english-word">secretary</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('che-cosa-fate-di-bello')">
+                                <div class="italian-word">Che cosa fate di bello?</div>
+                                <div class="english-word">What are you up to?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('scuola-di-lingue')">
+                                <div class="italian-word">scuola di lingue</div>
+                                <div class="english-word">language school</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('scuola')">
+                                <div class="italian-word">scuola</div>
+                                <div class="english-word">school (does not apply to university)</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('impiegato')">
+                                <div class="italian-word">impiegato/a</div>
+                                <div class="english-word">clerk, employee</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('agenzia-pubblicitaria')">
+                                <div class="italian-word">agenzia pubblicitaria</div>
+                                <div class="english-word">publicity agency</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('fotografo')">
+                                <div class="italian-word">fotografo/a</div>
+                                <div class="english-word">photographer</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('farmacista')">
+                                <div class="italian-word">farmacista</div>
+                                <div class="english-word">pharmacist</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('attore')">
+                                <div class="italian-word">attore</div>
+                                <div class="english-word">actor</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('attrice')">
+                                <div class="italian-word">attrice</div>
+                                <div class="english-word">actress</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('cantante')">
+                                <div class="italian-word">cantante</div>
+                                <div class="english-word">singer</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('scrittore')">
+                                <div class="italian-word">scrittore</div>
+                                <div class="english-word">writer (masculine)</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('scrittrice')">
+                                <div class="italian-word">scrittrice</div>
+                                <div class="english-word">writer (feminine)</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('ingegnere')">
+                                <div class="italian-word">ingegnere</div>
+                                <div class="english-word">engineer</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('operaio')">
+                                <div class="italian-word">operaio</div>
+                                <div class="english-word">factory worker</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('dentista')">
+                                <div class="italian-word">dentista</div>
+                                <div class="english-word">dentist</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('commesso')">
+                                <div class="italian-word">commesso/a</div>
+                                <div class="english-word">sales assistant</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('traduttore')">
+                                <div class="italian-word">traduttore</div>
+                                <div class="english-word">translator (masculine)</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('traduttrice')">
+                                <div class="italian-word">traduttrice</div>
+                                <div class="english-word">translator (feminine)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Workplace & Places -->
+                    <div class="section">
+                        <h3 class="section-title">🏢 Luoghi di Lavoro (Workplace & Places)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('posto-di-lavoro')">
+                                <div class="italian-word">posto di lavoro</div>
+                                <div class="english-word">workplace</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('negozio')">
+                                <div class="italian-word">negozio</div>
+                                <div class="english-word">shop, store</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('ufficio-postale')">
+                                <div class="italian-word">ufficio postale</div>
+                                <div class="english-word">post office</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('officina')">
+                                <div class="italian-word">officina</div>
+                                <div class="english-word">auto repair shop</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('ufficio')">
+                                <div class="italian-word">ufficio</div>
+                                <div class="english-word">office</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('fabbrica')">
+                                <div class="italian-word">fabbrica</div>
+                                <div class="english-word">factory</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('farmacia')">
+                                <div class="italian-word">farmacia</div>
+                                <div class="english-word">pharmacy</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('infermiere')">
+                                <div class="italian-word">infermiere/a</div>
+                                <div class="english-word">nurse</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('ma')">
+                                <div class="italian-word">ma</div>
+                                <div class="english-word">but</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Common Expressions -->
+                    <div class="section">
+                        <h3 class="section-title">💬 Espressioni Comuni (Common Expressions)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('un-po-di')">
+                                <div class="italian-word">un po' di</div>
+                                <div class="english-word">a bit of, a little</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('da-poi')">
+                                <div class="italian-word">da... in poi</div>
+                                <div class="english-word">... on</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('famoso')">
+                                <div class="italian-word">famoso</div>
+                                <div class="english-word">famous</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('iniziare')">
+                                <div class="italian-word">iniziare</div>
+                                <div class="english-word">to start, to begin</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('prima-seconda-guerra-mondiale')">
+                                <div class="italian-word">prima/seconda guerra mondiale</div>
+                                <div class="english-word">first/second world war</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('scoppiare')">
+                                <div class="italian-word">scoppiare</div>
+                                <div class="english-word">to break out</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('diventare')">
+                                <div class="italian-word">diventare</div>
+                                <div class="english-word">to become</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('moneta')">
+                                <div class="italian-word">moneta</div>
+                                <div class="english-word">currency, coin</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('finire')">
+                                <div class="italian-word">finire</div>
+                                <div class="english-word">to finish, to end</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('crollare')">
+                                <div class="italian-word">crollare</div>
+                                <div class="english-word">to collapse, to fall (apart)</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('muro')">
+                                <div class="italian-word">muro</div>
+                                <div class="english-word">wall</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('scoprire')">
+                                <div class="italian-word">scoprire</div>
+                                <div class="english-word">to discover</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('straniero')">
+                                <div class="italian-word">straniero/a</div>
+                                <div class="english-word">stranger, foreigner</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('collega')">
+                                <div class="italian-word">collega</div>
+                                <div class="english-word">colleague</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal Questions -->
+                    <div class="section">
+                        <h3 class="section-title">❓ Domande Personali (Personal Questions)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('come-mai')">
+                                <div class="italian-word">Come mai?</div>
+                                <div class="english-word">How come?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('migliorare')">
+                                <div class="italian-word">migliorare</div>
+                                <div class="english-word">to improve</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('ho-voglia-tanto-da')">
+                                <div class="italian-word">Ho avuto voglia tanto da</div>
+                                <div class="english-word">I still have a lot to learn!</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('imparare')">
+                                <div class="italian-word">imparare!</div>
+                                <div class="english-word">to learn</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('come-sta')">
+                                <div class="italian-word">Come sta?</div>
+                                <div class="english-word">How are you? (formal)</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('oggi')">
+                                <div class="italian-word">oggi</div>
+                                <div class="english-word">today</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('sto-proprio-male')">
+                                <div class="italian-word">Sto proprio male.</div>
+                                <div class="english-word">I'm not doing well at all.</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('come-va')">
+                                <div class="italian-word">Come va?</div>
+                                <div class="english-word">How is it going?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('non-ce-male')">
+                                <div class="italian-word">Non c'è male.</div>
+                                <div class="english-word">Not bad.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <!-- Chapter 4: Tempo libero -->
+                <div class="chapter-content" id="chapter4">
+                    <h2 class="chapter-title">Capitolo 4: Tempo libero</h2>
+                    
+                    <!-- Basic Activities -->
+                    <div class="section">
+                        <h3 class="section-title">🎯 Attività di Base (Basic Activities)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('tempo-libero')">
+                                <div class="italian-word">tempo libero</div>
+                                <div class="english-word">free time</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('giardinaggio')">
+                                <div class="italian-word">giardinaggio</div>
+                                <div class="english-word">gardening</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('guardare-la-televisione')">
+                                <div class="italian-word">guardare la televisione</div>
+                                <div class="english-word">to watch television</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('leggere')">
+                                <div class="italian-word">leggere</div>
+                                <div class="english-word">to read</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('ballare')">
+                                <div class="italian-word">ballare</div>
+                                <div class="english-word">to dance</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('cucinare')">
+                                <div class="italian-word">cucinare</div>
+                                <div class="english-word">to cook</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('dormire')">
+                                <div class="italian-word">dormire</div>
+                                <div class="english-word">to sleep</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('che-cosa-fai')">
+                                <div class="italian-word">Che cosa fai?</div>
+                                <div class="english-word">What do you do?</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Daily Activities -->
+                    <div class="section">
+                        <h3 class="section-title">📅 Attività Quotidiane (Daily Activities)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('di-solito')">
+                                <div class="italian-word">di solito</div>
+                                <div class="english-word">usually</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('palestra')">
+                                <div class="italian-word">palestra</div>
+                                <div class="english-word">gym</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('sto-a-casa')">
+                                <div class="italian-word">Sto a casa.</div>
+                                <div class="english-word">I am/stay at home.</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('quasi-sempre')">
+                                <div class="italian-word">quasi sempre</div>
+                                <div class="english-word">almost always</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('giocare')">
+                                <div class="italian-word">giocare (a)</div>
+                                <div class="english-word">to play (sports)</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('fare-una-passeggiata')">
+                                <div class="italian-word">fare una passeggiata</div>
+                                <div class="english-word">to take a walk</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('scrivere')">
+                                <div class="italian-word">scrivere</div>
+                                <div class="english-word">to write</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('fare-la-spesa')">
+                                <div class="italian-word">fare la spesa</div>
+                                <div class="english-word">to shop (for groceries)</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('andare-in-bicicletta')">
+                                <div class="italian-word">andare in bicicletta</div>
+                                <div class="english-word">to ride one's bicycle</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Entertainment & Media -->
+                    <div class="section">
+                        <h3 class="section-title">🎬 Intrattenimento (Entertainment & Media)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('interessante')">
+                                <div class="italian-word">interessante</div>
+                                <div class="english-word">interesting</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('mattina')">
+                                <div class="italian-word">mattina</div>
+                                <div class="english-word">morning</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('divertente')">
+                                <div class="italian-word">divertente</div>
+                                <div class="english-word">funny, entertaining</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('compagno')">
+                                <div class="italian-word">compagno/a</div>
+                                <div class="english-word">classmate</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('simpatico')">
+                                <div class="italian-word">simpatico</div>
+                                <div class="english-word">nice</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('problema')">
+                                <div class="italian-word">problema</div>
+                                <div class="english-word">problem</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('per-strada')">
+                                <div class="italian-word">per strada</div>
+                                <div class="english-word">in the street</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('tutto')">
+                                <div class="italian-word">tutto</div>
+                                <div class="english-word">everybody, all</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('rapidamente')">
+                                <div class="italian-word">rapidamente</div>
+                                <div class="english-word">fast</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('qualche-volta')">
+                                <div class="italian-word">qualche volta</div>
+                                <div class="english-word">sometimes</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('niente')">
+                                <div class="italian-word">niente</div>
+                                <div class="english-word">nothing</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feelings & Emotions -->
+                    <div class="section">
+                        <h3 class="section-title">😊 Sentimenti (Feelings & Emotions)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('situazione')">
+                                <div class="italian-word">situazione</div>
+                                <div class="english-word">situation</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('strano')">
+                                <div class="italian-word">strano</div>
+                                <div class="english-word">strange</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('emozionante')">
+                                <div class="italian-word">emozionante</div>
+                                <div class="english-word">thrilling</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('divertirsi')">
+                                <div class="italian-word">divertirsi</div>
+                                <div class="english-word">funny, hilarious</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('non-so-cosa-fare')">
+                                <div class="italian-word">Non so cosa fare.</div>
+                                <div class="english-word">I don't know what to do.</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('davvero')">
+                                <div class="italian-word">davvero</div>
+                                <div class="english-word">really; I'd like to be able to</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('troppo-nervoso')">
+                                <div class="italian-word">troppo nervoso</div>
+                                <div class="english-word">too nervous</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('pensare')">
+                                <div class="italian-word">pensare</div>
+                                <div class="english-word">to think</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('fortunatamente')">
+                                <div class="italian-word">fortunatamente</div>
+                                <div class="english-word">luckily</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('tutto')">
+                                <div class="italian-word">tutto</div>
+                                <div class="english-word">everything, all</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('sembrare')">
+                                <div class="italian-word">sembrare</div>
+                                <div class="english-word">to seem, to look like</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('tranquillo')">
+                                <div class="italian-word">tranquillo</div>
+                                <div class="english-word">calm, relaxed</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('sicuro')">
+                                <div class="italian-word">sicuro</div>
+                                <div class="english-word">self-confident</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Time Expressions -->
+                    <div class="section">
+                        <h3 class="section-title">⏰ Espressioni di Tempo (Time Expressions)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('pomeriggio')">
+                                <div class="italian-word">pomeriggio</div>
+                                <div class="english-word">afternoon</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('dopo')">
+                                <div class="italian-word">dopo</div>
+                                <div class="english-word">after, later</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('prima')">
+                                <div class="italian-word">prima</div>
+                                <div class="english-word">before, earlier</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('andare-in-giro')">
+                                <div class="italian-word">andare in giro</div>
+                                <div class="english-word">to hang around</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('ogni-giorno')">
+                                <div class="italian-word">ogni giorno</div>
+                                <div class="english-word">everyday</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('quartiere')">
+                                <div class="italian-word">quartiere</div>
+                                <div class="english-word">neighbourhood</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('insieme')">
+                                <div class="italian-word">insieme (a)</div>
+                                <div class="english-word">to go out</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('piccolo')">
+                                <div class="italian-word">piccolo</div>
+                                <div class="english-word">small, little</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('eccezionale')">
+                                <div class="italian-word">eccezionale</div>
+                                <div class="english-word">extraordinary, one of a kind</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('stanco')">
+                                <div class="italian-word">stanco</div>
+                                <div class="english-word">tired</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('camminare')">
+                                <div class="italian-word">camminare</div>
+                                <div class="english-word">to walk</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('parco')">
+                                <div class="italian-word">parco</div>
+                                <div class="english-word">park</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('spesso')">
+                                <div class="italian-word">spesso</div>
+                                <div class="english-word">often</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('sera')">
+                                <div class="italian-word">sera</div>
+                                <div class="english-word">evening</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('bere')">
+                                <div class="italian-word">bere</div>
+                                <div class="english-word">to drink</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('difficile')">
+                                <div class="italian-word">difficile</div>
+                                <div class="english-word">difficult, hard</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('seguire')">
+                                <div class="italian-word">seguire</div>
+                                <div class="english-word">to follow</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Going Out & Social -->
+                    <div class="section">
+                        <h3 class="section-title">🎉 Uscire e Socializzare (Going Out & Social)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('restare')">
+                                <div class="italian-word">restare</div>
+                                <div class="english-word">to stay, to remain</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('cenare')">
+                                <div class="italian-word">cenare</div>
+                                <div class="english-word">to have dinner</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('per-fortuna')">
+                                <div class="italian-word">per fortuna</div>
+                                <div class="english-word">luckily</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('paese')">
+                                <div class="italian-word">paese</div>
+                                <div class="english-word">country</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('vero')">
+                                <div class="italian-word">vero</div>
+                                <div class="english-word">real, true</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('cena')">
+                                <div class="italian-word">cena</div>
+                                <div class="english-word">dinner</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('vacanza')">
+                                <div class="italian-word">vacanza</div>
+                                <div class="english-word">holiday</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('notte')">
+                                <div class="italian-word">notte</div>
+                                <div class="english-word">night</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('giornale')">
+                                <div class="italian-word">giornale</div>
+                                <div class="english-word">newspaper</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('succo-di-frutta')">
+                                <div class="italian-word">succo di frutta</div>
+                                <div class="english-word">fruit juice</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('dolce')">
+                                <div class="italian-word">dolce</div>
+                                <div class="english-word">cake, dessert</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('lettera')">
+                                <div class="italian-word">lettera</div>
+                                <div class="english-word">letter</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('macchina')">
+                                <div class="italian-word">macchina</div>
+                                <div class="english-word">car</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('teatro')">
+                                <div class="italian-word">teatro</div>
+                                <div class="english-word">theater</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('mai')">
+                                <div class="italian-word">mai</div>
+                                <div class="english-word">never</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('usare')">
+                                <div class="italian-word">usare</div>
+                                <div class="english-word">to use</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal Preferences -->
+                    <div class="section">
+                        <h3 class="section-title">💝 Preferenze Personali (Personal Preferences)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('mangiare-fuori')">
+                                <div class="italian-word">mangiare fuori</div>
+                                <div class="english-word">to eat out</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('scalare')">
+                                <div class="italian-word">scalare</div>
+                                <div class="english-word">to ski</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('eta')">
+                                <div class="italian-word">età</div>
+                                <div class="english-word">age</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('ragola')">
+                                <div class="italian-word">ragola</div>
+                                <div class="english-word">restaurant</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('attivita')">
+                                <div class="italian-word">attività</div>
+                                <div class="english-word">activity</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('progetto')">
+                                <div class="italian-word">progetto</div>
+                                <div class="english-word">project</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('il-prossimo-anno')">
+                                <div class="italian-word">il prossimo anno</div>
+                                <div class="english-word">next year</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('dipende')">
+                                <div class="italian-word">dipende</div>
+                                <div class="english-word">it depends</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('a-me-piace-molto')">
+                                <div class="italian-word">a me piace molto...</div>
+                                <div class="english-word">I like... a lot</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('suonare')">
+                                <div class="italian-word">suonare</div>
+                                <div class="english-word">to play (music)</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('naturalmente')">
+                                <div class="italian-word">naturalmente</div>
+                                <div class="english-word">of course</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('ancora')">
+                                <div class="italian-word">ancora</div>
+                                <div class="english-word">still</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('mese')">
+                                <div class="italian-word">mese</div>
+                                <div class="english-word">month</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('da-sola')">
+                                <div class="italian-word">da sola</div>
+                                <div class="english-word">alone</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('avere-bisogno-di')">
+                                <div class="italian-word">avere bisogno di</div>
+                                <div class="english-word">to need</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('esattamente')">
+                                <div class="italian-word">esattamente</div>
+                                <div class="english-word">exactly</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('bello')">
+                                <div class="italian-word">Bello!</div>
+                                <div class="english-word">Great!, Nice!</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('avere-voglia-di')">
+                                <div class="italian-word">avere voglia di</div>
+                                <div class="english-word">to feel like</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('avere-paura')">
+                                <div class="italian-word">avere paura</div>
+                                <div class="english-word">to be afraid, to fear</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('capire')">
+                                <div class="italian-word">capire</div>
+                                <div class="english-word">to understand</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('dire')">
+                                <div class="italian-word">dire</div>
+                                <div class="english-word">to say</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('avere-fame')">
+                                <div class="italian-word">avere fame</div>
+                                <div class="english-word">to be hungry</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('avere-sete')">
+                                <div class="italian-word">avere sete</div>
+                                <div class="english-word">to be thirsty</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('avere-sonno')">
+                                <div class="italian-word">avere sonno</div>
+                                <div class="english-word">to be sleepy</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('avere-caldo')">
+                                <div class="italian-word">avere caldo</div>
+                                <div class="english-word">to be hot</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('avere-freddo')">
+                                <div class="italian-word">avere freddo</div>
+                                <div class="english-word">to be cold</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('avere-fretta')">
+                                <div class="italian-word">avere fretta</div>
+                                <div class="english-word">to be in a hurry</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cost & Money -->
+                    <div class="section">
+                        <h3 class="section-title">💰 Costi e Denaro (Cost & Money)</h3>
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card" onclick="playAudio('quanto-costa')">
+                                <div class="italian-word">Quanto costa?</div>
+                                <div class="english-word">How much does it cost?</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('qui-vicino')">
+                                <div class="italian-word">qui vicino</div>
+                                <div class="english-word">near here, nearby</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('biglietto')">
+                                <div class="italian-word">biglietto</div>
+                                <div class="english-word">ticket</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('prezzo')">
+                                <div class="italian-word">prezzo</div>
+                                <div class="english-word">price</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('in-particolare')">
+                                <div class="italian-word">in particolare</div>
+                                <div class="english-word">in particular</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('scrivimi')">
+                                <div class="italian-word">Scrivimi!</div>
+                                <div class="english-word">Write to me.</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('squadra')">
+                                <div class="italian-word">squadra</div>
+                                <div class="english-word">team</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('moltissimo')">
+                                <div class="italian-word">moltissimo</div>
+                                <div class="english-word">a lot</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('trovare-lavoro')">
+                                <div class="italian-word">trovare lavoro</div>
+                                <div class="english-word">to find a job</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('estate')">
+                                <div class="italian-word">estate</div>
+                                <div class="english-word">summer</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('fare-un-viaggio')">
+                                <div class="italian-word">fare un viaggio</div>
+                                <div class="english-word">to go on a trip</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('regione')">
+                                <div class="italian-word">regione</div>
+                                <div class="english-word">region</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('piacere')">
+                                <div class="italian-word">piacere</div>
+                                <div class="english-word">to like</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('mi-piace-moltissimo')">
+                                <div class="italian-word">mi piace moltissimo</div>
+                                <div class="english-word">I like it very much</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('ti-piace-piacerino')">
+                                <div class="italian-word">ti piace/piacerino</div>
+                                <div class="english-word">you like</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('affatto')">
+                                <div class="italian-word">affatto</div>
+                                <div class="english-word">at all</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('per-niente')">
+                                <div class="italian-word">per niente</div>
+                                <div class="english-word">not at all</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('abbastanza')">
+                                <div class="italian-word">abbastanza</div>
+                                <div class="english-word">enough, pretty well</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('fametti')">
+                                <div class="italian-word">fametti</div>
+                                <div class="english-word">service fiction</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('fantascienza')">
+                                <div class="italian-word">fantascienza</div>
+                                <div class="english-word">in bed</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('a-letto')">
+                                <div class="italian-word">a letto</div>
+                                <div class="english-word">crime novel</div>
+                            </div>
+                            <div class="vocab-card" onclick="playAudio('libro-giallo')">
+                                <div class="italian-word">libro giallo</div>
+                                <div class="english-word">crime novel</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentChapter = 'welcome';
+        let completedExercises = 0;
+        let totalExercises = 8; // Update this as you add more exercises
+
+        function showChapter(chapterId) {
+            // Hide all chapters
+            const chapters = document.querySelectorAll('.chapter-content');
+            chapters.forEach(chapter => chapter.classList.remove('active'));
+            
+            // Show selected chapter
+            document.getElementById(chapterId).classList.add('active');
+            
+            // Update sidebar buttons
+            const buttons = document.querySelectorAll('.chapter-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            currentChapter = chapterId;
+        }
+
+        function checkAnswer(button, isCorrect) {
+            const buttons = button.parentElement.querySelectorAll('.answer-btn');
+            
+            // Reset all buttons
+            buttons.forEach(btn => {
+                btn.classList.remove('correct', 'incorrect');
+                btn.disabled = false;
+            });
+            
+            // Mark the selected answer
+            if (isCorrect) {
+                button.classList.add('correct');
+                completedExercises++;
+                updateProgress();
+                setTimeout(() => {
+                    alert('Bravissimo! Correct! 🎉');
+                }, 100);
+            } else {
+                button.classList.add('incorrect');
+                setTimeout(() => {
+                    alert('Try again! Riprova! 🤔');
+                }, 100);
+            }
+            
+            // Disable all buttons after selection
+            setTimeout(() => {
+                buttons.forEach(btn => btn.disabled = true);
+            }, 1000);
+        }
+
+        function updateProgress() {
+            const progressPercent = (completedExercises / totalExercises) * 100;
+            document.getElementById('progressFill').style.width = progressPercent + '%';
+        }
+
+        function playAudio(word) {
+            // This is a placeholder for audio functionality
+            // You can integrate with Web Speech API or audio files
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'it-IT';
+                speechSynthesis.speak(utterance);
+            } else {
+                alert('Audio pronunciation: ' + word);
+            }
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set welcome as active by default
+            document.querySelector('.chapter-btn').classList.add('active');
+        });
+    </script>
+</body>
+</html>
