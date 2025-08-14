@@ -2530,16 +2530,60 @@
         }
 
         function playAudio(word) {
-            // This is a placeholder for audio functionality
-            // You can integrate with Web Speech API or audio files
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(word);
-                utterance.lang = 'it-IT';
-                speechSynthesis.speak(utterance);
+    if ('speechSynthesis' in window) {
+        // Cancel any ongoing speech
+        speechSynthesis.cancel();
+        
+        const utterance = new SpeechSynthesisUtterance(word);
+        
+        // Wait for voices to load
+        function setVoiceAndSpeak() {
+            const voices = speechSynthesis.getVoices();
+            
+            // Try to find Italian voices (in order of preference)
+            const italianVoice = voices.find(voice => 
+                voice.lang.startsWith('it-IT') || 
+                voice.lang.startsWith('it') ||
+                voice.name.toLowerCase().includes('italian') ||
+                voice.name.toLowerCase().includes('italiano')
+            );
+            
+            if (italianVoice) {
+                utterance.voice = italianVoice;
+                console.log('Using Italian voice:', italianVoice.name);
             } else {
-                alert('Audio pronunciation: ' + word);
+                console.log('No Italian voice found, using default');
+                // Fallback: try to force Italian pronunciation
+                utterance.lang = 'it-IT';
             }
+            
+            // Set additional properties for better Italian pronunciation
+            utterance.lang = 'it-IT';
+            utterance.rate = 0.8; // Slightly slower for clarity
+            utterance.pitch = 1.0;
+            utterance.volume = 1.0;
+            
+            // Error handling
+            utterance.onerror = function(event) {
+                console.log('Speech synthesis error:', event.error);
+                alert('Audio not available: ' + word);
+            };
+            
+            speechSynthesis.speak(utterance);
         }
+        
+        // Check if voices are already loaded
+        if (speechSynthesis.getVoices().length > 0) {
+            setVoiceAndSpeak();
+        } else {
+            // Wait for voices to load
+            speechSynthesis.addEventListener('voiceschanged', setVoiceAndSpeak, { once: true });
+        }
+        
+    } else {
+        alert('Audio pronunciation not supported: ' + word);
+    }
+}
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
